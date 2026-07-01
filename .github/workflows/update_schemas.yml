@@ -3,6 +3,9 @@ name: Update EDM4hep Schema
 on:
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
     update-schema:
         name: update-schema
@@ -65,5 +68,3 @@ jobs:
                     src/coffea/nanoevents/assets/__init__.py
 
             git commit -m "Update EDM4hep schema" || echo "No changes"
-
-            git push
