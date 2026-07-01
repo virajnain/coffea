@@ -68,3 +68,4 @@ jobs:
                     src/coffea/nanoevents/assets/__init__.py
 
             git commit -m "Update EDM4hep schema" || echo "No changes"
+            git push
