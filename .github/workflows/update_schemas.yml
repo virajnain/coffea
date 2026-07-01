@@ -43,7 +43,7 @@ jobs:
                 idx = text.find(marker)
 
                 if idx == -1:
-                raise RuntimeError("Could not find versions list")
+                    raise RuntimeError("Could not find versions list")
                 
                 insert_pos = text.find("\n", idx) + 1
                 new_line = f'    "{VERSION}",\n'
