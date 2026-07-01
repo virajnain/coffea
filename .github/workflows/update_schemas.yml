@@ -1,0 +1,57 @@
+name: Update EDM4hep Schema
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+    update-schema:
+        name: update-schema
+        runs-on: ubuntu-latest
+        if: github.event_name == 'workflow_dispatch'
+
+        steps:
+        - uses: actions/checkout@v6
+
+        - name: Retrieve latest schema YAML
+          run: |
+            TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/key4hep/EDM4hep \
+            | tail -1 \
+            | sed 's|.*refs/tags/||')
+            VERSION=${TAG#v}
+
+            curl -L \
+            -o src/coffea/nanoevents/assets/edm4hep_v${VERSION}.yaml \
+            https://raw.githubusercontent.com/key4hep/EDM4hep/v${VERSION}/edm4hep.yaml
+
+        - name: Update assets/__init__.py
+          run: |
+            TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/key4hep/EDM4hep \
+            | tail -1 \
+            | sed 's|.*refs/tags/||')
+            VERSION=${TAG#v}
+
+            python3 <<EOF
+            from pathlib import Path
+
+            VERSION = "$VERSION"
+
+            path = Path("src/coffea/nanoevents/assets/__init__.py")
+            text = path.read_text()
+
+            if f'"{VERSION}"' not in text:
+                marker = "versions = ["
+                idx = text.find(marker)
+
+                if idx == -1:
+                raise RuntimeError("Could not find versions list")
+                
+                insert_pos = text.find("\n", idx) + 1
+                new_line = f'    "{VERSION}",\n'
+
+                text = text[:insert_pos] + new_line + text[insert_pos:]
+                path.write_text(text)
+
+                print(f"Added version {VERSION}")
+            else:
+                print(f"Version {VERSION} already exists")
+            EOF
