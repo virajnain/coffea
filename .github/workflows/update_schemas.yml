@@ -47,7 +47,7 @@ jobs:
 
                 if idx == -1:
                     raise RuntimeError("Could not find versions list")
-                
+
                 insert_pos = text.find("\n", idx) + 1
                 new_line = f'    "{VERSION}",\n'
 
@@ -58,7 +58,7 @@ jobs:
             else:
                 print(f"Version {VERSION} already exists")
             EOF
-        
+
         - name: Commit and push changes
           run: |
             git config user.name "github-actions[bot]"
