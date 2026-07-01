@@ -55,3 +55,15 @@ jobs:
             else:
                 print(f"Version {VERSION} already exists")
             EOF
+        
+        - name: Commit and push changes
+          run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            git add src/coffea/nanoevents/assets/edm4hep_v*.yaml \
+                    src/coffea/nanoevents/assets/__init__.py
+
+            git commit -m "Update EDM4hep schema" || echo "No changes"
+
+            git push
